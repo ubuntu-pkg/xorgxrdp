@@ -1,0 +1,18 @@
+Source: xrdp-xorg
+Section: net
+Priority: optional
+Maintainer: Fajar A. Nugraha <ubuntu-ppa@fajar.net>
+Build-Depends:	debhelper (>= 8.0.0), quilt,
+		autoconf (>= 2.59), automake (>= 1.6), libtool,
+		xserver-xorg, xserver-xorg-dev,
+		nasm
+Standards-Version: 3.9.4
+Homepage: https://github.com/neutrinolabs/xorgxrdp
+
+Package: xrdp-xorg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, xrdp
+Recommends: xrdp-xorg
+Description: xorg modules for xrdp
+ xorgxrdp is a collection of modules to be used with the pre-existing
+ Xorg install to make the X server act like X11rdp.

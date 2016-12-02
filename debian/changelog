@@ -1,0 +1,6 @@
+xrdp-xorg (0.1.0+git161203~f42f7a2) xenial; urgency=low
+  * initial packge
+  * source from https://github.com/neutrinolabs/xorgxrdp/tree/devel, f42f7a2
+
+ -- Fajar A. Nugraha <ubuntu-ppa@fajar.net>  Sat, 03 Dec 2016 02:04:00 +0700
+
