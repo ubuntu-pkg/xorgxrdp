@@ -20,6 +20,6 @@ debuild binary
 * Install built package
  ```
 cd ..
-gdebi ./xrdp-xorg_*+git*.deb
+gdebi ./xrdp-xorg_*git*.deb
  ```
 
