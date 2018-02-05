@@ -8,7 +8,6 @@ EXTRA_DIST = \
 
 SUBDIRS = \
   module \
-  tests \
   xrdpdev \
   xrdpkeyb \
   xrdpmouse
