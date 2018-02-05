@@ -1,5 +1,5 @@
 /*
-Copyright 2013-2016 Jay Sorg
+Copyright 2013-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -21,6 +21,10 @@ xrdp keyboard module
 
 */
 
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +37,7 @@ xrdp keyboard module
 #include <xf86.h>
 #include <xf86_OSproc.h>
 
-#include "xf86Xinput.h"
+#include <xf86Xinput.h>
 
 #include <mipointer.h>
 #include <fb.h>
@@ -42,7 +46,7 @@ xrdp keyboard module
 
 #include <xkbsrv.h>
 
-#include "X11/keysym.h"
+#include <X11/keysym.h>
 
 #include "rdp.h"
 #include "rdpInput.h"
@@ -561,15 +565,11 @@ rdpkeybDeviceInit(DeviceIntPtr pDevice, KeySymsPtr pKeySyms, CARD8 *pModMap)
     pKeySyms->minKeyCode = MIN_KEY_CODE;
     pKeySyms->maxKeyCode = MAX_KEY_CODE;
     pKeySyms->mapWidth = GLYPHS_PER_KEY;
-    pKeySyms->map = g_new(KeySym, MAP_LENGTH * GLYPHS_PER_KEY);
+    pKeySyms->map = g_new0(KeySym, MAP_LENGTH * GLYPHS_PER_KEY);
     if (pKeySyms->map == 0)
     {
         LLOGLN(0, ("rdpkeybDeviceInit: out of memory"));
         exit(1);
-    }
-    else
-    {
-        memset(pKeySyms->map, 0, i);
     }
 
     for (i = 0; i < MAP_LENGTH * GLYPHS_PER_KEY; i++)

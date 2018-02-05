@@ -1,5 +1,5 @@
 /*
-Copyright 2014-2016 Jay Sorg
+Copyright 2014-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -31,12 +31,12 @@ XVideo
 extern _X_EXPORT Bool
 rdpXvInit(ScreenPtr pScreen, ScrnInfoPtr pScrn);
 extern _X_EXPORT int
-YV12_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs);
+YV12_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs);
 extern _X_EXPORT int
-I420_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs);
+I420_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs);
 extern _X_EXPORT int
-YUY2_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs);
+YUY2_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs);
 extern _X_EXPORT int
-UYVY_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs);
+UYVY_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs);
 
 #endif

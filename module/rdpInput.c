@@ -1,5 +1,5 @@
 /*
-Copyright 2013-2016 Jay Sorg
+Copyright 2013-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -18,6 +18,10 @@ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,22 +79,13 @@ int
 rdpUnregisterInputCallback(rdpInputEventProcPtr proc)
 {
     int index;
-    char text[256];
 
     LLOGLN(0, ("rdpUnregisterInputCallback: proc %p", proc));
     for (index = 0; index < MAX_INPUT_PROC; index++)
     {
         if (g_input_proc[index].proc == proc)
         {
-            if (index == 0)
-            {
-                /* hack to cleanup
-                   remove when xrdpdevTearDown is working */
-                g_sprintf(text, "/tmp/.xrdp/xrdp_display_%s", display);
-                LLOGLN(0, ("rdpUnregisterInputCallback: deleting file %s", text));
-                unlink(text);
-            }
-            g_input_proc[index].proc = 0; 
+            g_input_proc[index].proc = 0;
             return 0;
         }
     }
