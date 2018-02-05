@@ -2,6 +2,7 @@
 
 Tested on Ubuntu 16.04
 
+* Install matching version of xrdp (e.g. from https://github.com/ubuntu-pkg/xrdp/releases)
 * Create an empty working directory
  ```
 mkdir ~/xorgxrdp-build
@@ -22,4 +23,3 @@ debuild binary
 cd ..
 gdebi ./xrdp-xorg_*git*.deb
  ```
-
