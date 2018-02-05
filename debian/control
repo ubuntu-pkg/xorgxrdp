@@ -4,8 +4,8 @@ Priority: optional
 Maintainer: Fajar A. Nugraha <ubuntu-ppa@fajar.net>
 Build-Depends:	debhelper (>= 8.0.0), quilt,
 		autoconf (>= 2.59), automake (>= 1.6), libtool,
-		xserver-xorg, xserver-xorg-dev,
-		nasm
+		x11-utils, xserver-xorg, xserver-xorg-dev,
+		pkg-config, nasm, xrdp (>= 0.9.5)
 Standards-Version: 3.9.4
 Homepage: https://github.com/neutrinolabs/xorgxrdp
 
