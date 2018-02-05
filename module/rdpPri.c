@@ -1,5 +1,5 @@
 /*
-Copyright 2013-2016 Jay Sorg
+Copyright 2013-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 to deal with privates changing in xorg versions
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,8 +56,8 @@ to deal with privates changing in xorg versions
 #define XRDP_PRI 3
 #endif
 
-#define PTR2INT(_ptr) ((int)    ((long) ((void*) (_ptr))))
-#define INT2PTR(_int) ((void *) ((long) ((int)   (_int))))
+#define PTR2INT(_ptr) ((int)    ((uintptr_t) ((void*) (_ptr))))
+#define INT2PTR(_int) ((void *) ((uintptr_t) ((int)   (_int))))
 
 #if XRDP_PRI == 3
 static DevPrivateKeyRec g_privateKeyRecGC;

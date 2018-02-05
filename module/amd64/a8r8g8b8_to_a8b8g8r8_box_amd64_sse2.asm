@@ -21,23 +21,12 @@
 ;amd64 SSE2
 ;
 
-%ifidn __OUTPUT_FORMAT__,elf64
-SECTION .note.GNU-stack noalloc noexec nowrite progbits
-%endif
+%include "common.asm"
 
-SECTION .data
-align 16
+PREPARE_RODATA
 c1 times 4 dd 0xFF00FF00
 c2 times 4 dd 0x00FF0000
 c3 times 4 dd 0x000000FF
-
-SECTION .text
-
-%macro PROC 1
-    align 16
-    global %1
-    %1:
-%endmacro
 
 ;The first six integer or pointer arguments are passed in registers
 ; RDI, RSI, RDX, RCX, R8, and R9
@@ -46,27 +35,23 @@ SECTION .text
 ; in the lsb nibble, ie. s8 & 0xf == d8 & 0xf
 ; if not, it won't make use of the simd
 ;int
-;a8r8g8b8_to_a8b8g8r8_box_amd64_sse2(char *s8, int src_stride,
+;a8r8g8b8_to_a8b8g8r8_box_amd64_sse2(const char *s8, int src_stride,
 ;                                    char *d8, int dst_stride,
 ;                                    int width, int height);
-%ifidn __OUTPUT_FORMAT__,elf64
 PROC a8r8g8b8_to_a8b8g8r8_box_amd64_sse2
-%else
-PROC _a8r8g8b8_to_a8b8g8r8_box_amd64_sse2
-%endif
     push rbx
     push rbp
 
-    movdqa xmm4, [rel c1]
-    movdqa xmm5, [rel c2]
-    movdqa xmm6, [rel c3]
+    movdqa xmm4, [lsym(c1)]
+    movdqa xmm5, [lsym(c2)]
+    movdqa xmm6, [lsym(c3)]
 
     ; local vars
     ; long src_stride
     ; long dst_stride
     ; long width
     ; long height
-    ; char* src
+    ; const char* src
     ; char* dst
     sub rsp, 48         ; local vars, 48 bytes
 
@@ -109,7 +94,7 @@ loop_xpre:
     mov [rdi], edx
     lea rdi, [rdi + 4]
     dec rcx
-    jmp loop_xpre;
+    jmp loop_xpre
 done_loop_xpre:
 
 ; A R G B A R G B A R G B A R G B to
@@ -151,7 +136,7 @@ loop_x8:
     lea rdi, [rdi + 16]
     sub rcx, 4
 
-    jmp loop_x8;
+    jmp loop_x8
 done_loop_x8:
 
 loop_x:
@@ -172,7 +157,7 @@ loop_x:
     mov [rdi], edx
     lea rdi, [rdi + 4]
     dec rcx
-    jmp loop_x;
+    jmp loop_x
 done_loop_x:
 
     mov rsi, [rsp + 32] ; src
@@ -193,5 +178,4 @@ done_loop_x:
     pop rbp
     pop rbx
     ret
-    align 16
-
+END_OF_FILE

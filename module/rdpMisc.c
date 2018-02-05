@@ -1,5 +1,5 @@
 /*
-Copyright 2005-2016 Jay Sorg
+Copyright 2005-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 the rest
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,36 +136,9 @@ g_sleep(int msecs)
 
 /*****************************************************************************/
 int
-g_sck_send(int sck, void *ptr, int len, int flags)
+g_sck_send(int sck, const void *ptr, int len, int flags)
 {
     return send(sck, ptr, len, flags);
-}
-
-/*****************************************************************************/
-void *
-g_malloc(int size, int zero)
-{
-    char *rv;
-
-    rv = (char *)malloc(size);
-    if (zero)
-    {
-        if (rv != 0)
-        {
-            memset(rv, 0, size);
-        }
-    }
-    return rv;
-}
-
-/*****************************************************************************/
-void
-g_free(void *ptr)
-{
-    if (ptr != 0)
-    {
-        free(ptr);
-    }
 }
 
 /*****************************************************************************/
@@ -402,17 +379,33 @@ g_chmod_hex(const char *filename, int flags)
 }
 
 /*****************************************************************************/
+/* returns directory where UNIX sockets are located */
+const char *
+g_socket_dir(void)
+{
+    const char *socket_dir;
+
+    socket_dir = getenv("XRDP_SOCKET_PATH");
+    if (socket_dir == NULL || socket_dir[0] == '\0')
+    {
+        socket_dir = "/tmp/.xrdp";
+    }
+
+    return socket_dir;
+}
+
+/*****************************************************************************/
 /* produce a hex dump */
 void
-g_hexdump(void *p, long len)
+g_hexdump(const void *p, long len)
 {
-    unsigned char *line;
+    const unsigned char *line;
     int i;
     int thisline;
     int offset;
 
     offset = 0;
-    line = (unsigned char *) p;
+    line = (const unsigned char *) p;
 
     while (offset < (int) len)
     {

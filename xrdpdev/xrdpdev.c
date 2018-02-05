@@ -1,5 +1,5 @@
 /*
-Copyright 2013-2016 Jay Sorg
+Copyright 2013-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 This is the main driver file
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,16 +71,6 @@ This is the main driver file
     } \
   } \
   while (0)
-
-int g_bpp = 32;
-int g_depth = 24;
-int g_rgb_bits = 8;
-int g_redOffset = 16;
-int g_redBits = 8;
-int g_greenOffset = 8;
-int g_greenBits = 8;
-int g_blueOffset = 0;
-int g_blueBits = 8;
 
 static int g_setup_done = 0;
 static OsTimerPtr g_timer = 0;
@@ -165,23 +159,25 @@ rdpPreInit(ScrnInfoPtr pScrn, int flags)
     dev->height = 600;
 
     pScrn->monitor = pScrn->confScreen->monitor;
-    pScrn->bitsPerPixel = g_bpp;
+    pScrn->bitsPerPixel = 32;
     pScrn->virtualX = dev->width;
     pScrn->displayWidth = dev->width;
     pScrn->virtualY = dev->height;
     pScrn->progClock = 1;
-    pScrn->rgbBits = g_rgb_bits;
-    pScrn->depth = g_depth;
+    pScrn->rgbBits = 8;
+    pScrn->depth = 24;
     pScrn->chipset = g_xrdp_driver_name;
     pScrn->currentMode = pScrn->modes;
-    pScrn->offset.blue = g_blueOffset;
-    pScrn->offset.green = g_greenOffset;
-    pScrn->offset.red = g_redOffset;
-    pScrn->mask.blue = ((1 << g_blueBits) - 1) << pScrn->offset.blue;
-    pScrn->mask.green = ((1 << g_greenBits) - 1) << pScrn->offset.green;
-    pScrn->mask.red = ((1 << g_redBits) - 1) << pScrn->offset.red;
 
-    if (!xf86SetDepthBpp(pScrn, g_depth, g_bpp, g_bpp,
+    pScrn->offset.blue = 0;
+    pScrn->offset.green = 8;
+    pScrn->offset.red = 16;
+    pScrn->mask.blue = ((1 << 8) - 1) << pScrn->offset.blue;
+    pScrn->mask.green = ((1 << 8) - 1) << pScrn->offset.green;
+    pScrn->mask.red = ((1 << 8) - 1) << pScrn->offset.red;
+
+    if (!xf86SetDepthBpp(pScrn, pScrn->depth, pScrn->bitsPerPixel,
+                         pScrn->bitsPerPixel,
                          Support24bppFb | Support32bppFb |
                          SupportConvert32to24 | SupportConvert24to32))
     {
@@ -452,8 +448,8 @@ rdpScreenInit(ScreenPtr pScreen, int argc, char **argv)
     dev->bitsPerPixel = rdpBitsPerPixel(dev->depth);
     dev->sizeInBytes = dev->paddedWidthInBytes * dev->height;
     LLOGLN(0, ("rdpScreenInit: pfbMemory bytes %d", dev->sizeInBytes));
-    dev->pfbMemory_alloc = g_new0(char, dev->sizeInBytes + 16);
-    dev->pfbMemory = (char*) RDPALIGN(dev->pfbMemory_alloc, 16);
+    dev->pfbMemory_alloc = g_new0(uint8_t, dev->sizeInBytes + 16);
+    dev->pfbMemory = (uint8_t *) RDPALIGN(dev->pfbMemory_alloc, 16);
     LLOGLN(0, ("rdpScreenInit: pfbMemory %p", dev->pfbMemory));
     if (!fbScreenInit(pScreen, dev->pfbMemory,
                       pScrn->virtualX, pScrn->virtualY,
@@ -469,7 +465,7 @@ rdpScreenInit(ScreenPtr pScreen, int argc, char **argv)
     miInitializeBackingStore(pScreen);
 #endif
 
-    /* try in init simd functions */
+    /* try to init simd functions */
     rdpSimdInit(pScreen, pScrn);
 
 #if defined(XvExtension) && XvExtension
@@ -532,6 +528,9 @@ rdpScreenInit(ScreenPtr pScreen, int argc, char **argv)
 
     dev->privateKeyRecGC = rdpAllocateGCPrivate(pScreen, sizeof(rdpGCRec));
     dev->privateKeyRecPixmap = rdpAllocatePixmapPrivate(pScreen, sizeof(rdpPixmapRec));
+
+    dev->CloseScreen = pScreen->CloseScreen;
+    pScreen->CloseScreen = rdpCloseScreen;
 
     dev->CopyWindow = pScreen->CopyWindow;
     pScreen->CopyWindow = rdpCopyWindow;

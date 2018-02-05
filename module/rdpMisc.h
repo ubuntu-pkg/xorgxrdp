@@ -1,5 +1,5 @@
 /*
-Copyright 2005-2016 Jay Sorg
+Copyright 2005-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -52,11 +52,7 @@ g_sck_last_error_would_block(int sck);
 extern _X_EXPORT void
 g_sleep(int msecs);
 extern _X_EXPORT int
-g_sck_send(int sck, void *ptr, int len, int flags);
-extern _X_EXPORT void *
-g_malloc(int size, int zero);
-extern _X_EXPORT void
-g_free(void *ptr);
+g_sck_send(int sck, const void *ptr, int len, int flags);
 extern _X_EXPORT void
 g_sprintf(char *dest, const char *format, ...);
 extern _X_EXPORT int
@@ -89,15 +85,17 @@ extern _X_EXPORT int
 g_directory_exist(const char *dirname);
 extern _X_EXPORT int
 g_chmod_hex(const char *filename, int flags);
+extern _X_EXPORT const char *
+g_socket_dir(void);
 extern _X_EXPORT void
-g_hexdump(void *p, long len);
+g_hexdump(const void *p, long len);
 
 
 /* glib-style memory allocation macros */
 #define g_new(struct_type, n_structs) \
-    (struct_type *) malloc(sizeof(struct_type) * (n_structs))
+    (struct_type *) xnfalloc(sizeof(struct_type) * (n_structs))
 #define g_new0(struct_type, n_structs) \
-    (struct_type *) calloc((n_structs), sizeof(struct_type))
+    (struct_type *) xnfcalloc((n_structs), sizeof(struct_type))
 
 
 #if defined(X_BYTE_ORDER)
@@ -167,7 +165,7 @@ do {                                                    \
 do {                                         \
     if ((v) > (s)->size)                     \
     {                                        \
-        g_free((s)->data);                   \
+        free((s)->data);                   \
         (s)->data = g_new(char, (v));        \
         (s)->size = (v);                     \
     }                                        \
@@ -274,9 +272,9 @@ do {                                                          \
 do {                       \
     if ((s) != 0)          \
     {                      \
-        g_free((s)->data); \
+        free((s)->data); \
     }                      \
-    g_free((s));           \
+    free((s));           \
 } while (0)
 
 #endif

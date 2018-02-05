@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script
 
-AC_PREREQ(2.59)
-AC_INIT([xorgxrdp], [0.1.0], [xrdp-devel@googlegroups.com])
+AC_PREREQ(2.65)
+AC_INIT([xorgxrdp], [0.2.5], [xrdp-devel@googlegroups.com])
 AC_CONFIG_HEADERS(config_ac.h:config_ac-h.in)
 AM_INIT_AUTOMAKE([1.11 foreign parallel-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -21,12 +21,17 @@ if test "x$XRDP_CFLAGS" = "x"; then
   PKG_CHECK_MODULES([XRDP], [xrdp >= 0.9.0])
 fi
 
-moduledir=`pkg-config xorg-server --variable=moduledir`
-AC_SUBST([moduledir])
+AC_ARG_ENABLE([strict-locations],
+  [AS_HELP_STRING([--enable-strict-locations], [Use standard installation directories])])
 
-if test "x${prefix}" = "xNONE" ; then
-sysconfdir="/etc";
+if test "x$enable_strict_locations" = "xyes"; then
+  moduledir='${libdir}/xorg/modules'
+else
+  moduledir=`pkg-config xorg-server --variable=moduledir`
+  sysconfdir="/etc"
 fi
+
+AC_SUBST([moduledir])
 
 # SIMD is optional
 AC_ARG_WITH([simd],
@@ -61,7 +66,10 @@ AM_CONDITIONAL(WITH_SIMD_X86, [test x$simd_arch = xi386])
 
 AC_CONFIG_FILES([Makefile
                  module/Makefile
+                 module/amd64/Makefile
+                 module/x86/Makefile
                  tests/Makefile
+                 tests/yuv2rgb/Makefile
                  xrdpdev/Makefile
                  xrdpkeyb/Makefile
                  xrdpmouse/Makefile

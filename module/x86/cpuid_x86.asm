@@ -21,26 +21,12 @@
 ;x86 SSE2
 ;
 
-%ifidn __OUTPUT_FORMAT__,elf
-SECTION .note.GNU-stack noalloc noexec nowrite progbits
-%endif
-
-SECTION .text
-
-%macro PROC 1
-    align 16
-    global %1
-    %1:
-%endmacro
+%include "common.asm"
 
 ;int
 ;cpuid_x86(int eax_in, int ecx_in, int *eax, int *ebx, int *ecx, int *edx)
 
-%ifidn __OUTPUT_FORMAT__,elf
 PROC cpuid_x86
-%else
-PROC _cpuid_x86
-%endif
     ; save registers
     push ebx
     push ecx
@@ -65,5 +51,4 @@ PROC _cpuid_x86
     pop ecx
     pop ebx
     ret
-    align 16
-
+END_OF_FILE

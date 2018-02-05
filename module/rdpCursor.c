@@ -1,5 +1,5 @@
 /*
-Copyright 2005-2016 Jay Sorg
+Copyright 2005-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 cursor
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +47,6 @@ cursor
 #include <X11/Xarch.h>
 
 #include "rdp.h"
-#include "rdpMain.h"
 #include "rdpDraw.h"
 #include "rdpClientCon.h"
 #include "rdpCursor.h"
@@ -54,7 +57,7 @@ cursor
 
 #if (X_BYTE_ORDER == X_LITTLE_ENDIAN)
 /* Copied from Xvnc/lib/font/util/utilbitmap.c */
-static unsigned char g_reverse_byte[0x100] =
+static uint8_t g_reverse_byte[0x100] =
 {
     0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
     0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
@@ -114,12 +117,12 @@ rdpSpriteUnrealizeCursor(DeviceIntPtr pDev, ScreenPtr pScr, CursorPtr pCurs)
 
 /******************************************************************************/
 static int
-get_pixel_safe(char *data, int x, int y, int width, int height, int bpp)
+get_pixel_safe(const uint8_t *data, int x, int y, int width, int height, int bpp)
 {
     int start;
     int shift;
     int c;
-    unsigned int *src32;
+    const uint32_t *src32;
 
     if (x < 0)
     {
@@ -146,7 +149,7 @@ get_pixel_safe(char *data, int x, int y, int width, int height, int bpp)
         width = (width + 7) / 8;
         start = (y * width) + x / 8;
         shift = x % 8;
-        c = (unsigned char)(data[start]);
+        c = (uint8_t) (data[start]);
 #if (X_BYTE_ORDER == X_LITTLE_ENDIAN)
         return (g_reverse_byte[c] & (0x80 >> shift)) != 0;
 #else
@@ -155,7 +158,7 @@ get_pixel_safe(char *data, int x, int y, int width, int height, int bpp)
     }
     else if (bpp == 32)
     {
-        src32 = (unsigned int*)data;
+        src32 = (const uint32_t *) data;
         return src32[y * width + x];
     }
 
@@ -164,12 +167,12 @@ get_pixel_safe(char *data, int x, int y, int width, int height, int bpp)
 
 /******************************************************************************/
 static void
-set_pixel_safe(char *data, int x, int y, int width, int height, int bpp,
+set_pixel_safe(uint8_t *data, int x, int y, int width, int height, int bpp,
                int pixel)
 {
     int start;
     int shift;
-    unsigned int *dst32;
+    uint32_t *dst32;
 
     if (x < 0)
     {
@@ -214,7 +217,7 @@ set_pixel_safe(char *data, int x, int y, int width, int height, int bpp,
     }
     else if (bpp == 32)
     {
-        dst32 = (unsigned int*)data;
+        dst32 = (uint32_t *) data;
         dst32[y * width + x] = pixel;
     }
 }
@@ -225,10 +228,10 @@ rdpSpriteSetCursorCon(rdpClientCon *clientCon,
                       DeviceIntPtr pDev, ScreenPtr pScr, CursorPtr pCurs,
                       int x, int y)
 {
-    char cur_data[32 * (32 * 4)];
-    char cur_mask[32 * (32 / 8)];
-    char *mask;
-    char *data;
+    uint8_t cur_data[32 * (32 * 4)];
+    uint8_t cur_mask[32 * (32 / 8)];
+    uint8_t *mask;
+    uint8_t *data;
     int i;
     int j;
     int w;
@@ -252,7 +255,7 @@ rdpSpriteSetCursorCon(rdpClientCon *clientCon,
         paddedRowBytes = PixmapBytePad(w, 32);
         xhot = pCurs->bits->xhot;
         yhot = pCurs->bits->yhot;
-        data = (char *)(pCurs->bits->argb);
+        data = (uint8_t *)(pCurs->bits->argb);
         memset(cur_data, 0, sizeof(cur_data));
         memset(cur_mask, 0, sizeof(cur_mask));
 
@@ -271,8 +274,8 @@ rdpSpriteSetCursorCon(rdpClientCon *clientCon,
         paddedRowBytes = PixmapBytePad(w, 1);
         xhot = pCurs->bits->xhot;
         yhot = pCurs->bits->yhot;
-        data = (char *)(pCurs->bits->source);
-        mask = (char *)(pCurs->bits->mask);
+        data = (uint8_t *)(pCurs->bits->source);
+        mask = (uint8_t *)(pCurs->bits->mask);
         fgcolor = (((pCurs->foreRed >> 8) & 0xff) << 16) |
                   (((pCurs->foreGreen >> 8) & 0xff) << 8) |
                   ((pCurs->foreBlue >> 8) & 0xff);
@@ -354,5 +357,4 @@ void
 rdpSpriteDeviceCursorCleanup(DeviceIntPtr pDev, ScreenPtr pScr)
 {
     LLOGLN(10, ("rdpSpriteDeviceCursorCleanup:"));
-    xorgxrdpDownDown(pScr);
 }

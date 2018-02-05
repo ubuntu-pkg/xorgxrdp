@@ -1,5 +1,5 @@
 /*
-Copyright 2005-2016 Jay Sorg
+Copyright 2005-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -98,7 +98,7 @@ struct _rdpClientCon
 
     struct xrdp_client_info client_info;
 
-    char *shmemptr;
+    uint8_t *shmemptr;
     int shmemid;
     int shmem_lineBytes;
     RegionPtr shmRegion;
@@ -109,6 +109,9 @@ struct _rdpClientCon
     int updateScheduled; /* boolean */
 
     RegionPtr dirtyRegion;
+
+    int num_rfx_crcs_alloc;
+    int *rfx_crcs;
 
     struct _rdpClientCon *next;
 };
@@ -160,10 +163,10 @@ extern _X_EXPORT int
 rdpClientConAddAllBox(rdpPtr dev, BoxPtr box, DrawablePtr pDrawable);
 extern _X_EXPORT int
 rdpClientConSetCursor(rdpPtr dev, rdpClientCon *clientCon,
-                      short x, short y, char *cur_data, char *cur_mask);
+                      short x, short y, uint8_t *cur_data, uint8_t *cur_mask);
 extern _X_EXPORT int
 rdpClientConSetCursorEx(rdpPtr dev, rdpClientCon *clientCon,
-                        short x, short y, char *cur_data,
-                        char *cur_mask, int bpp);
+                        short x, short y, uint8_t *cur_data,
+                        uint8_t *cur_mask, int bpp);
 
 #endif

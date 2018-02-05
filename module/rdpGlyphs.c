@@ -1,5 +1,5 @@
 /*
-Copyright 2012-2016 Jay Sorg
+Copyright 2012-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 glyph (font) calls
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,13 +65,13 @@ rdpGlyphDeleteRdpText(struct rdp_text *rtext)
     {
         if (rtext->chars[index] != NULL)
         {
-            g_free(rtext->chars[index]->data);
-            g_free(rtext->chars[index]);
+            free(rtext->chars[index]->data);
+            free(rtext->chars[index]);
         }
     }
     rdpRegionDestroy(rtext->reg);
     rdpGlyphDeleteRdpText(rtext->next);
-    g_free(rtext);
+    free(rtext);
     return 0;
 }
 

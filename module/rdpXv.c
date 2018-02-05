@@ -1,5 +1,5 @@
 /*
-Copyright 2014-2016 Jay Sorg
+Copyright 2014-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -20,6 +20,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 XVideo
 
 */
+
+#if defined(HAVE_CONFIG_H)
+#include "config_ac.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,7 +165,7 @@ xrdpVidQueryBestSize(ScrnInfoPtr pScrn, Bool motion,
 
 /*****************************************************************************/
 int
-YV12_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
+YV12_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs)
 {
     int size_total;
     int y;
@@ -202,7 +206,7 @@ YV12_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
 
 /*****************************************************************************/
 int
-I420_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
+I420_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs)
 {
     int size_total;
     int y;
@@ -243,7 +247,7 @@ I420_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
 
 /*****************************************************************************/
 int
-YUY2_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
+YUY2_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs)
 {
     int y1;
     int y2;
@@ -297,7 +301,7 @@ YUY2_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
 
 /*****************************************************************************/
 int
-UYVY_to_RGB32(unsigned char *yuvs, int width, int height, int *rgbs)
+UYVY_to_RGB32(const uint8_t *yuvs, int width, int height, int *rgbs)
 {
     int y1;
     int y2;
@@ -451,7 +455,7 @@ rdpDeferredXvCleanup(OsTimerPtr timer, CARD32 now, pointer arg)
     dev = (rdpPtr) arg;
     dev->xv_timer_scheduled = 0;
     dev->xv_data_bytes = 0;
-    g_free(dev->xv_data);
+    free(dev->xv_data);
     dev->xv_data = 0;
     return 0;
 }
@@ -494,8 +498,8 @@ xrdpVidPutImage(ScrnInfoPtr pScrn,
     index = width * height * 4 + drw_w * drw_h * 4 + 64;
     if (index > dev->xv_data_bytes)
     {
-        g_free(dev->xv_data);
-        dev->xv_data = g_new(char, index);
+        free(dev->xv_data);
+        dev->xv_data = g_new(uint8_t, index);
         if (dev->xv_data == NULL)
         {
             LLOGLN(0, ("xrdpVidPutImage: memory alloc error"));

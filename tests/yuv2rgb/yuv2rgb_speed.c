@@ -1,5 +1,5 @@
 /*
-Copyright 2014-2015 Jay Sorg
+Copyright 2014-2017 Jay Sorg
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -29,6 +29,14 @@ yuv to rgb speed testing
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+
+#if defined(USE_SIMD_AMD64)
+#define a8r8g8b8_to_nv12_box_accel a8r8g8b8_to_nv12_box_amd64_sse2
+#endif
+
+#if defined(USE_SIMD_X86)
+#define a8r8g8b8_to_nv12_box_accel a8r8g8b8_to_nv12_box_x86_sse2
+#endif
 
 /******************************************************************************/
 //Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16
@@ -265,6 +273,7 @@ int main(int argc, char** argv)
     int data_bytes;
     int stime;
     int etime;
+    int ret = 0;
     char* rgb_data;
     char* yuv_data1;
     char* yuv_data2;
@@ -303,17 +312,16 @@ int main(int argc, char** argv)
     stime = get_mstime();
     for (index = 0; index < 100; index++)
     {
-        //a8r8g8b8_to_nv12_box_x86_sse2
-        //a8r8g8b8_to_nv12_box_amd64_sse2
-        a8r8g8b8_to_nv12_box_amd64_sse2(al_rgb_data, 1920 * 4,
-                                        al_yuv_data2, 1920,
-                                        al_yuv_data2 + 1920 * 1080, 1920,
-                                        1920, 1080);
+        a8r8g8b8_to_nv12_box_accel(al_rgb_data, 1920 * 4,
+                                   al_yuv_data2, 1920,
+                                   al_yuv_data2 + 1920 * 1080, 1920,
+                                   1920, 1080);
     }
     etime = get_mstime();
     printf("a8r8g8b8_to_nv12_box_x86_sse2 took %d\n", etime - stime);
     if (lmemcmp(al_yuv_data1, al_yuv_data2, 1920 * 1080 * 3 / 2, &offset) != 0)
     {
+        ret = 1;
         printf("no match at offset %d\n", offset);
         printf("first\n");
         hexdump(al_yuv_data1 + offset, 16);
@@ -327,5 +335,5 @@ int main(int argc, char** argv)
     free(rgb_data);
     free(yuv_data1);
     free(yuv_data2);
-    return 0; 
+    return ret;
 }
