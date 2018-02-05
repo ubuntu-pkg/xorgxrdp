@@ -1,5 +1,6 @@
 xrdp-xorg (0.2.5+git080206~5efd502) xenial; urgency=low
   * update source from https://github.com/neutrinolabs/xorgxrdp/tree/devel, 5efd502
+  * build fixes
 
  -- Fajar A. Nugraha <ubuntu-ppa@fajar.net>  Tue, 06 Feb 2018 02:34:00 +0700
 
