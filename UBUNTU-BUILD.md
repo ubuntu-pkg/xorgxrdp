@@ -15,7 +15,7 @@ apt install git devscripts equivs gdebi-core
 git clone -b ubuntu-devel https://github.com/ubuntu-xrdp/xorgxrdp.git
 cd xorgxrdp
 mk-build-deps -i -r
-debuild -- binary
+debuild
  ```
 
 * Install built package
