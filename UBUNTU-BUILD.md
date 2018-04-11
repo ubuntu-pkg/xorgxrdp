@@ -19,14 +19,9 @@ cd xorgxrdp
 mk-build-deps -i -r
  ```
 
-* Build on Ubuntu 16.04
+* Build
  ```
-debuild binary
- ```
-
-* Build on Ubuntu 18.04
- ```
-debuild -- binary
+dh binary
  ```
 
 * Install package
