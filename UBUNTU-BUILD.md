@@ -9,16 +9,25 @@ mkdir ~/xorgxrdp-build
 cd ~/xorgxrdp-build
  ```
 
-* Build xorgxrdp
+* Install dependencies
  ```
 apt install git devscripts equivs gdebi-core
 git clone -b ubuntu-devel https://github.com/ubuntu-xrdp/xorgxrdp.git
 cd xorgxrdp
 mk-build-deps -i -r
-debuild
  ```
 
-* Install built package
+* Build xorgxrdp, on Ubuntu 16.04
+ ```
+debuild binary
+ ```
+
+* Build xorgxrdp, on Ubuntu 18.04
+ ```
+debuild -- binary
+ ```
+
+* Install package
  ```
 cd ..
 gdebi ./xrdp-xorg_*git*.deb
