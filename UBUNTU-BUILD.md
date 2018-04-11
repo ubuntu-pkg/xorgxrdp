@@ -17,12 +17,12 @@ cd xorgxrdp
 mk-build-deps -i -r
  ```
 
-* Build xorgxrdp, on Ubuntu 16.04
+* Build on Ubuntu 16.04
  ```
 debuild binary
  ```
 
-* Build xorgxrdp, on Ubuntu 18.04
+* Build on Ubuntu 18.04
  ```
 debuild -- binary
  ```
