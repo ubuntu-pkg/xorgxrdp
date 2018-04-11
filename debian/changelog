@@ -1,3 +1,8 @@
+xrdp-xorg (0.2.6+git080411~0ea63e6) xenial; urgency=low
+  * update source from https://github.com/neutrinolabs/xorgxrdp/tree/devel, last commit 0ea63e6
+
+ -- Fajar A. Nugraha <ubuntu-ppa@fajar.net>  Tue, 11 Apr 2018 12:56:00 +0700
+
 xrdp-xorg (0.2.5+git080206~5efd502) xenial; urgency=low
   * update source from https://github.com/neutrinolabs/xorgxrdp/tree/devel, 5efd502
   * build fixes
@@ -9,4 +14,3 @@ xrdp-xorg (0.1.0+git161203~f42f7a2) xenial; urgency=low
   * source from https://github.com/neutrinolabs/xorgxrdp/tree/devel, f42f7a2
 
  -- Fajar A. Nugraha <ubuntu-ppa@fajar.net>  Sat, 03 Dec 2016 02:04:00 +0700
-
