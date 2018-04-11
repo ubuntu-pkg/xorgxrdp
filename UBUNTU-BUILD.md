@@ -9,6 +9,8 @@ mkdir ~/xorgxrdp-build
 cd ~/xorgxrdp-build
  ```
 
+* Install matching version of xrdp (e.g. from https://github.com/ubuntu-pkg/xrdp/releases)
+
 * Install dependencies
  ```
 apt install git devscripts equivs gdebi-core
