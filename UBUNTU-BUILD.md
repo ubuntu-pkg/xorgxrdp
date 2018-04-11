@@ -21,7 +21,7 @@ mk-build-deps -i -r
 
 * Build
  ```
-dh binary
+fakeroot dh binary
  ```
 
 * Install package
